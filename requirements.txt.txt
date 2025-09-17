@@ -1,0 +1,9 @@
+numpy
+pandas
+opencv-python
+matplotlib
+scikit-image
+scikit-learn
+kaggle
+tensorflow==2.15.0
+keras==2.15.0

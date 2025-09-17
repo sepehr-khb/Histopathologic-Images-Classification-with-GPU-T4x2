@@ -1,0 +1,29 @@
+
+```gitignore
+
+# Ignore data and models (large files)
+data/
+models/
+
+# Kaggle outputs, temp
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.ipynb_checkpoints
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Virtual envs
+venv/
+.env/
+
+# Jupyter
+*.ipynb_checkpoints
+
+# Optional: large binaries
+*.h5
+*.keras

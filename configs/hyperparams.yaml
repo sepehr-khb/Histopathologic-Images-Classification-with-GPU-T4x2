@@ -1,0 +1,89 @@
+# configs/hyperparams.yaml
+# Hyperparameters and pipeline settings for the project
+# Edit values here (batch_size, lr, image size, paths, callbacks, etc.)
+
+seed: 42
+kaggle_mode: true   # Run in kaggle/input/
+num_gpus: 2
+strategy: "MirroredStrategy"  # used for documentation only
+
+data:
+  base_dir: "./data"                    # local data root (change to /kaggle/input/... on Kaggle)
+  train_dir: "./data/train"
+  test_dir: "./data/test"
+  train_labels: "./data/train_labels.csv"
+  sample_submission: "./data/sample_submission.csv"
+  ensure_divisible_by_batch: true       # enforce train/val/test divisible by batch_size
+
+image:
+  height: 96
+  width: 96
+  channels: 3
+  rescale: 0.003921568627451        #(1/255) rescale factor for ImageDataGenerator
+
+training:
+  batch_size: 64
+  epochs_total: 20
+  epochs_per_run: 10                     # you can run training in 2 runs of 10 epochs if needed
+  steps_per_epoch: null                  # null => compute from generator length (len(generator))
+  validation_steps: null
+  test_steps: null
+  drop_remainder: true                   # important for multi-GPU (MirroredStrategy)
+  prefetch: true
+  autotune: true
+
+optimizer:
+  name: "Adam"
+  learning_rate: 0.001
+  weight_decay: 0.0
+
+loss: "binary_crossentropy"
+
+metrics:
+  - "accuracy"
+
+regularization:
+  l2: 0.0005
+  dropout: 0.5 # Finally (0.4 – 0.6)
+
+augmentation:
+  use_augmentation: true
+  rotation_range: 15
+  width_shift_range: 0.1
+  height_shift_range: 0.1
+  zoom_range: 0.1
+  horizontal_flip: true
+  fill_mode: "nearest"
+
+callbacks:
+  reduce_lr_on_plateau:
+    monitor: "val_loss"
+    factor: 0.5
+    patience: 2
+    min_lr: 1e-5
+    verbose: 1
+  early_stopping:
+    monitor: "val_loss"
+    patience: 3
+    restore_best_weights: true
+    verbose: 1
+  model_checkpoint:
+    monitor: "val_loss"
+    save_best_only: true
+    mode: "min"
+
+mixed_precision:
+  enabled: false   # disabled because it caused NaN in this project
+
+paths:
+  models_dir: "./models"       # stored on disk but ignored by .gitignore (do not push)
+  results_dir: "./results"
+  logs_dir: "./logs"
+
+io:
+  save_history: true
+  history_template: "{model_name}_history.npz"
+  preds_template: "{model_name}_predictions.csv"
+
+misc:
+  verbose: 1
